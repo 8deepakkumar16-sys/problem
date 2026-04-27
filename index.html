@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Time Manager - Perfect Daily Schedule</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-clock"></i> Student Time Manager</h1>
+            <p>Perfect your daily schedule</p>
+        </header>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Date & Time Display -->
+            <div class="date-time-card">
+                <div class="current-time" id="currentTime"></div>
+                <div class="current-date" id="currentDate"></div>
+            </div>
+
+            <!-- Add Task Button -->
+            <div class="add-task-section">
+                <button class="add-task-btn" id="addTaskBtn">
+                    <i class="fas fa-plus"></i> Add Task
+                </button>
+            </div>
+
+            <!-- Task Categories -->
+            <div class="task-categories">
+                <div class="category active" data-category="all">
+                    <i class="fas fa-list"></i> All Tasks
+                    <span class="count" id="allCount">0</span>
+                </div>
+                <div class="category" data-category="study">
+                    <i class="fas fa-book"></i> Study
+                    <span class="count" id="studyCount">0</span>
+                </div>
+                <div class="category" data-category="exercise">
+                    <i class="fas fa-dumbbell"></i> Exercise
+                    <span class="count" id="exerciseCount">0</span>
+                </div>
+                <div class="category" data-category="personal">
+                    <i class="fas fa-heart"></i> Personal
+                    <span class="count" id="personalCount">0</span>
+                </div>
+            </div>
+
+            <!-- Tasks List -->
+            <div class="tasks-list" id="tasksList">
+                <div class="empty-state">
+                    <i class="fas fa-tasks"></i>
+                    <h3>No tasks yet</h3>
+                    <p>Add your first task to get started!</p>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalTasks">0</div>
+                    <div class="stat-label">Total Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedTasks">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="productivityScore">0%</div>
+                    <div class="stat-label">Productivity</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Task</h3>
+                <button class="close-btn" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Task Name</label>
+                    <input type="text" id="taskName" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-clock"></i> Duration (minutes)</label>
+                    <input type="number" id="taskDuration" min="5" max="240" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-day"></i> Date</label>
+                    <input type="date" id="taskDate">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-layer-group"></i> Category</label>
+                    <select id="taskCategory" required>
+                        <option value="study">📚 Study</option>
+                        <option value="exercise">💪 Exercise</option>
+                        <option value="personal">❤️ Personal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="taskCompleted">
+                        Mark as completed
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="save-btn">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
