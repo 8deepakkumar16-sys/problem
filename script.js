@@ -219,3 +219,138 @@ class StudentTimeManager {
 
 // Initialize app
 const app = new StudentTimeManager();
+// Add these methods to your StudentTimeManager class
+
+// Enhanced initialization with stagger animations
+init() {
+    this.updateTimeDisplay();
+    this.renderTasks();
+    this.bindEvents();
+    this.updateStats();
+    this.staggerAnimation();
+    setInterval(() => this.updateTimeDisplay(), 1000);
+}
+
+// Stagger animation for elements
+staggerAnimation() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationDelay = `${index * 0.1}s`;
+                entry.target.classList.add('animate-in');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.task-item, .stat-card').forEach(el => {
+        observer.observe(el);
+    });
+}
+
+// Enhanced task rendering with animation classes
+renderTasks(filter = 'all') {
+    const tasksList = document.getElementById('tasksList');
+    let filteredTasks = this.tasks;
+
+    if (filter !== 'all') {
+        filteredTasks = this.tasks.filter(task => task.category === filter);
+    }
+
+    if (filteredTasks.length === 0) {
+        tasksList.innerHTML = this.getEmptyStateHTML(filter);
+        return;
+    }
+
+    tasksList.innerHTML = filteredTasks.map((task, index) => `
+        <div class="task-item ${task.completed ? 'completed' : ''}" data-id="${task.id}" style="animation-delay: ${index * 0.1}s">
+            <div class="task-header">
+                <div class="task-title">${this.escapeHtml(task.name)}</div>
+                <span class="task-category category-${task.category}">${this.getCategoryName(task.category)}</span>
+            </div>
+            <div class="task-time">
+                <i class="fas fa-stopwatch"></i> ${task.duration} min • 
+                <i class="fas fa-calendar"></i> ${new Date(task.date).toLocaleDateString()}
+            </div>
+            <div class="task-actions">
+                <button class="btn btn-complete" onclick="app.toggleComplete('${task.id}')">
+                    ${task.completed ? '⏸️ Pause' : '✅ Complete'}
+                </button>
+                <button class="btn btn-edit" onclick="app.openModal(${JSON.stringify(task)})">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-delete" onclick="app.deleteTask('${task.id}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+
+    // Trigger stagger animation
+    setTimeout(() => this.staggerAnimation(), 100);
+    
+    this.updateCategoryCounts();
+}
+
+// Enhanced empty state
+getEmptyStateHTML(filter) {
+    return `
+        <div class="empty-state">
+            <i class="fas fa-${filter === 'all' ? 'tasks' : filter === 'study' ? 'book' : filter === 'exercise' ? 'dumbbell' : 'heart'}"></i>
+            <h3>No ${filter === 'all' ? 'tasks' : filter} yet</h3>
+            <p style="animation-delay: 0.3s;">Add your first ${filter === 'all' ? 'task' : filter} to get started!</p>
+            <button class="add-task-btn" style="margin-top: 25px; animation-delay: 0.5s;" onclick="app.openModal()">
+                <i class="fas fa-plus"></i> Add First Task
+            </button>
+        </div>
+    `;
+}
+
+// Add confetti effect for task completion
+toggleComplete(id) {
+    const task = this.tasks.find(t => t.id === id);
+    if (task) {
+        task.completed = !task.completed;
+        if (task.completed) {
+            this.showConfetti();
+        }
+        this.saveToStorage();
+        this.renderTasks();
+        this.updateStats();
+    }
+}
+
+showConfetti() {
+    // Simple confetti effect
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.cssText = `
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: ${['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b'][Math.floor(Math.random() * 5)]};
+            top: -10px;
+            left: ${Math.random() * 100}vw;
+            animation: confettiFall 3s linear forwards;
+            pointer-events: none;
+            z-index: 9999;
+            border-radius: 50%;
+        `;
+        confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => confetti.remove(), 3000);
+    }
+}
+
+// Add to CSS for confetti
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes confettiFall {
+        to {
+            transform: translateY(100vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
